@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Parcheesi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8f6d67039f6a204dac476d4b710e8b26f23d7382")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0f9ea129bcfc1781eed5e39fe279f6b3dfe2a4ca")]
 [assembly: System.Reflection.AssemblyProductAttribute("Parcheesi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Parcheesi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

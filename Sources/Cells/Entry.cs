@@ -9,7 +9,7 @@ class Entry : Cell
         FactionBox = factionBox;
     }
 
-    public override void Efect(Token token)
+    public override void ActivateEffect(Token token)
     {
         if (token.Type_faction == Color) token.Position = FactionBox;
     }

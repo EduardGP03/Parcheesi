@@ -1,4 +1,4 @@
-public class Ability
+public abstract class Ability
 {
     public string Name { get; set; }
     public int CooldownTime { get; set; }

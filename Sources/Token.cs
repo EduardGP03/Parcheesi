@@ -1,36 +1,55 @@
 public class Token
 {
     public Faction Type_faction;
-    public int Speed { get; set; }
-    public bool IsCooldownActive { get; set; }
+    public Speed Speed { get; set; }
+    private bool IsCooldownActive { get; set; }
+    private int CooldownTime { get; set; }
     public Ability Ability { get; set; }
-
-    public Cell Position;
+    public int Position;
+    public int BasePosition;
+    public bool ProtectedToken;
 
     //public int CooldownTime { get; set; }
     //public string Name { get; set; }
     //public int PositionX { get; set; }
     //public int PositionY { get; set; }
-    public Token(Faction faction, int speed, Ability ability)
+    public Token(Faction faction, Ability ability, int BasePosition)
     {
         Type_faction = faction;
-        Speed = speed;
+        Speed = new();
         Ability = ability;
+        ProtectedToken = false;
+        this.BasePosition=BasePosition;
     }
 
     // Mueve la ficha en el tablero
-    public Cell? Move(Cell cell, int move)
+    public int GetTotalMove(int diceRoll)
     {
-        if (move == 0)
-        {
-            if (cell.type_cell == Type.wall) return cell;
-            
-            else return null;
-        }
+        int result = Speed.baseValue + diceRoll;
 
-        return Move(cell.GetNext(), move - 1);
+        foreach (var mod in Speed.ModifierswithDuration.Keys)
+            result *= mod;
+
+        return result;
     }
+    public void Move(Cell[] cells, int Move)
+    {
+        int ActualPosition = Position;
+        for (int i = 0; i < Math.Abs(Move); i++)
+        {
+            if(ActualPosition == -1) ActualPosition= cells.Length-1;
+            if(ActualPosition == cells.Length) ActualPosition= 0;
+            ActualPosition = (int.IsPositive(Move)) ? ActualPosition + 1 : ActualPosition - 1;
+            if (cells[ActualPosition] is Wall)
+            {
+                cells[ActualPosition].ActivateEffect(this);
+                break;
+            }
+        }
+        Position= ActualPosition;
+        cells[ActualPosition].ActivateEffect(this);
 
+    }
     // Usa la habilidad de la ficha
     public void UseAbility()
     {

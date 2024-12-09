@@ -10,7 +10,7 @@ class Goal : Cell
         TotalTokens = totalTokens;
     }
 
-    public override void Efect(Token token)
+    public override void ActivateEffect(Token token)
     {
         Counter++;
         if(Counter == TotalTokens) GameWinner = true;
