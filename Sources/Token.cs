@@ -1,28 +1,30 @@
 public class Token
 {
-    public Faction Type_faction;
+    public Faction Type_faction { get; set; }
     public Speed Speed { get; set; }
-    private bool IsCooldownActive { get; set; }
+    public bool IsCooldownActive { get; set; }//necesitaba hacerlo publico
     private int CooldownTime { get; set; }
     public Ability Ability { get; set; }
-    public int Position;
-    public int BasePosition; //ver si es esta o player quien la debe conocer
-    public bool ProtectedToken;
+    public int Position { get; set; }
+    public int BasePosition { get; set; }
+    public bool ProtectedToken { get; set; }
 
     //public int CooldownTime { get; set; }
     //public string Name { get; set; }
     //public int PositionX { get; set; }
     //public int PositionY { get; set; }
-    public Token(Faction faction, Ability ability, int BasePosition)
+    public Token(Faction faction, Ability ability, int basePosition)
     {
         Type_faction = faction;
         Speed = new();
         Ability = ability;
         ProtectedToken = false;
-        this.BasePosition=BasePosition;
+        BasePosition = basePosition;
     }
-
-    // Mueve la ficha en el tablero
+    
+        
+    
+  // Muever la ficha en el tablero
     public int GetTotalMove(int diceRoll)
     {
         int result = Speed.baseValue + diceRoll;
@@ -37,8 +39,8 @@ public class Token
         int ActualPosition = Position;
         for (int i = 0; i < Math.Abs(Move); i++)
         {
-            if(ActualPosition == -1) ActualPosition= cells.Length-1;
-            if(ActualPosition == cells.Length) ActualPosition= 0;
+            if (ActualPosition == -1) ActualPosition = cells.Length - 1;
+            if (ActualPosition == cells.Length) ActualPosition = 0;
             ActualPosition = (int.IsPositive(Move)) ? ActualPosition + 1 : ActualPosition - 1;
             if (cells[ActualPosition] is Wall)
             {
@@ -46,11 +48,11 @@ public class Token
                 break;
             }
         }
-        Position= ActualPosition;
+        Position = ActualPosition;
         cells[ActualPosition].ActivateEffect(this);
 
     }
-    // Usa la habilidad de la ficha
+    // Usar la habilidad de la ficha
     public void UseAbility()
     {
         if (!IsCooldownActive)
@@ -62,7 +64,7 @@ public class Token
         }
     }
 
-    // Actualiza el estado de la ficha en cada turno
+    // Actualizar el estado de la ficha en cada turno
     public void UpdateTurn()
     {
         if (IsCooldownActive)
