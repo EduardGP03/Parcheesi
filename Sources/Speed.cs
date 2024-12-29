@@ -10,7 +10,7 @@ public class Speed
         ModifierswithDuration = new();
     }
 
-    public void AddModifiier(int mod, int duration) => this.ModifierswithDuration.Add(mod, duration);
+    public void AddModifier(int mod, int duration) => this.ModifierswithDuration.Add(mod, duration);
 
     public void UpdateModifers()
     {

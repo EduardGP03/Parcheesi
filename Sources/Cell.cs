@@ -5,7 +5,7 @@ public abstract class Cell
 
     public Cell()
     {
-        Tokens = [];
+        Tokens = new List<Token>();
     }
 
 }

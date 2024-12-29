@@ -4,7 +4,7 @@ class Goal : Cell
     int Counter = 0;
     int TotalTokens;
     bool GameWinner;
-    public Goal(Faction color, int totalTokens, Cell previous, Cell next) : base(null, null)
+    public Goal(Faction color, int totalTokens, Cell previous, Cell next) : base()
     {
         Color = color;
         TotalTokens = totalTokens;

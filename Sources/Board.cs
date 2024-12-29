@@ -1,15 +1,16 @@
-class Board
+public class Board
 {
     public Player[] Players;
     public Cell[] Cells;
     private Dice DiceRoll;
+    private int currentPlayerIndex; // Asegúrate de tener esta variable
 
-    public Board()
+    public Board(int numberOfPlayers)
     {
-        StartGame(Players.Length);
+        StartGame(numberOfPlayers);
     }
 
-    static void StartGame(int cantPlayers)
+    private void StartGame(int cantPlayers)
     {
         Players = new Player[cantPlayers];
         Cells = new Cell[40];
@@ -18,13 +19,11 @@ class Board
         for (int i = 0; i < cantPlayers; i++)
         {
             Faction faction = (Faction)(i % 4); // Asignar una facción cíclicamente
+            Players[i] = new Player(i, new List<Token>(), faction);
 
-            Players[i] = new Player(i, new List<Token>(), (Faction)i);
-
-            // Inicializa tokens para cada jugador
             for (int j = 0; j < 4; j++)
             {
-                Players[i].Tokens.Add(new Token(faction, null, 0)); // Ajusta Ability ver q habilidad poner
+                Players[i].Tokens.Add(new Token(faction, null, 0)); // Ajusta Ability según sea necesario
             }
         }
 
@@ -37,9 +36,9 @@ class Board
                 availablePositions.Add(i);
         }
 
-        PlaceRandomCell(ref availablePositions, new Trap(), 3);
-        PlaceRandomCell(ref availablePositions, new Wall(), 3);
-        PlaceRandomCell(ref availablePositions, new CellToken(), 2);
+        PlaceRandomCell(ref availablePositions, new Trap0((1, 2)), 3); // Ejemplo con Trap0
+        PlaceRandomCell(ref availablePositions, new Wall(3, (1, 2)), 3); // Ejemplo con Wall
+        PlaceRandomCell(ref availablePositions, new CellToken0((1, 2)), 2); // Ejemplo con CellToken0
     }
 
     public void NextTurn()
@@ -51,8 +50,8 @@ class Board
         {
             if (!token.IsCooldownActive) // Verifica si la habilidad está disponible
             {
-                // permitir al jugador elegir usar una habilidad
-                //Console.WriteLine($"¿Deseas usar la habilidad del token {token.Type_faction}? (s/n)");
+                // Aquí puedes permitir al jugador elegir usar una habilidad
+                Console.WriteLine($"¿Deseas usar la habilidad del token {token.Type_faction}? (s/n)");
                 string input = Console.ReadLine();
                 if (input.ToLower() == "s")
                 {
@@ -62,15 +61,15 @@ class Board
         }
 
         // Lanzar el dado
-        int diceRoll = Dice.Roll();
-        //Console.WriteLine($"El jugador {currentPlayer.PlayerFaction} ha lanzado el dado y obtuvo: {diceRoll}");
+        int diceRoll = DiceRoll.Roll();
+        Console.WriteLine($"El jugador {currentPlayer.PlayerFaction} ha lanzado el dado y obtuvo: {diceRoll}");
 
-        // permitir elegir qué token mover
-        Token tokenToMove = currentPlayer.Tokens[0]; // Ejemplo: mover el primer token
+        // Mover el primer token como ejemplo
+        Token tokenToMove = currentPlayer.Tokens[0];
         int totalMove = tokenToMove.GetTotalMove(diceRoll);
         tokenToMove.Move(Cells, totalMove);
 
-        // Actualizar el estado del juego, como cooldowns de habilidades
+        // Actualizar el estado del juego
         foreach (var token in currentPlayer.Tokens)
         {
             token.UpdateTurn(); // Actualiza cooldowns y estado del token
@@ -80,28 +79,19 @@ class Board
         currentPlayerIndex = (currentPlayerIndex + 1) % Players.Length;
     }
 
-    private static void PlaceRandomCell(ref List<int> availablePositions, Cell cellType, int count)
+    private void PlaceRandomCell(ref List<int> availablePositions, Cell cellType, int count)
     {
         Random random = new Random();
-
+        
         for (int i = 0; i < count; i++)
         {
+            if (availablePositions.Count == 0) break; // Verifica si hay posiciones disponibles
+
             int randomIndex = random.Next(availablePositions.Count);
             int positionToPlace = availablePositions[randomIndex];
 
-            // Almacena la instancia de la celda en la posición correspondiente
-            Cells[positionToPlace] = cellType;
-
+            Cells[positionToPlace] = cellType; // Almacena la instancia de la celda en la posición correspondiente
             availablePositions.RemoveAt(randomIndex);
         }
     }
-
-    static void UpdateGame()
-    {
-
-    }
 }
-
-
-
-

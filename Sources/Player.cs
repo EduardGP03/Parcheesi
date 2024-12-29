@@ -1,4 +1,4 @@
-class Player
+public class Player
 {
     public int PlayerStart {get; set;}
     public List<Token> Tokens {get; set;}

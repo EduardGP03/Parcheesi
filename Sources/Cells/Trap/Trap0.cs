@@ -9,6 +9,6 @@ class Trap0 : Trap
 
     public override void ActivateEffect(Token token)
     {
-        token.Speed.AddModifiier(Modifier.Item1, Modifier.Item2);
+        token.Speed.AddModifier(Modifier.Item1, Modifier.Item2);
     }
 }
