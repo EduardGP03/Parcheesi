@@ -3,7 +3,7 @@ public class Board
     public Player[] Players;
     public Cell[] Cells;
     private Dice DiceRoll;
-    private int currentPlayerIndex; // Asegúrate de tener esta variable
+    private int currentPlayerIndex;
 
     public Board(int numberOfPlayers)
     {
@@ -36,9 +36,42 @@ public class Board
                 availablePositions.Add(i);
         }
 
-        PlaceRandomCell(ref availablePositions, new Trap0((1, 2)), 3); // Ejemplo con Trap0
-        PlaceRandomCell(ref availablePositions, new Wall(3, (1, 2)), 3); // Ejemplo con Wall
-        PlaceRandomCell(ref availablePositions, new CellToken0((1, 2)), 2); // Ejemplo con CellToken0
+        // Definir los tipos de celdas y sus cantidades
+        Dictionary<Cell, int> cellTypes = new Dictionary<Cell, int>
+    {
+        { new Trap0((1, 2)), 1 }, // Una instancia de Trap0
+        { new Trap1(Cells), 1 }, // Una instancia de Trap1
+        { new Trap2(), 1 },       // Una instancia de Trap2
+        { new Wall(3, (1, 2)), 3 }, // Tres muros
+        { new CellToken0((1, 2)), cantPlayers * 2 } // Dos celdas de token por jugador
+    };
+
+        // Llama al método para colocar las celdas
+        PlaceCells(cellTypes, ref availablePositions);
+    }
+
+    private void PlaceCells(Dictionary<Cell, int> cellTypes, ref List<int> availablePositions)
+    {
+        foreach (var cellType in cellTypes)
+        {
+            PlaceRandomCell(ref availablePositions, cellType.Key, cellType.Value);
+        }
+    }
+
+    private void PlaceRandomCell(ref List<int> availablePositions, Cell cellType, int count)
+    {
+        Random random = new Random();
+
+        for (int i = 0; i < count; i++)
+        {
+            if (availablePositions.Count == 0) break; // Verifica si hay posiciones disponibles
+
+            int randomIndex = random.Next(availablePositions.Count);
+            int positionToPlace = availablePositions[randomIndex];
+
+            Cells[positionToPlace] = cellType; // Almacena la instancia de la celda en la posición correspondiente
+            availablePositions.RemoveAt(randomIndex);
+        }
     }
 
     public void NextTurn()
@@ -50,8 +83,8 @@ public class Board
         {
             if (!token.IsCooldownActive) // Verifica si la habilidad está disponible
             {
-                // Aquí puedes permitir al jugador elegir usar una habilidad
-                Console.WriteLine($"¿Deseas usar la habilidad del token {token.Type_faction}? (s/n)");
+                // Permitir al jugador elegir usar una habilidad
+                Console.WriteLine($"¿Deseas usar la habilidad del token {token.TokenFaction}? (s/n)");
                 string input = Console.ReadLine();
                 if (input.ToLower() == "s")
                 {
@@ -64,10 +97,31 @@ public class Board
         int diceRoll = DiceRoll.Roll();
         Console.WriteLine($"El jugador {currentPlayer.PlayerFaction} ha lanzado el dado y obtuvo: {diceRoll}");
 
-        // Mover el primer token como ejemplo
-        Token tokenToMove = currentPlayer.Tokens[0];
+        // Mostrar las fichas del jugador y permitir que elija una para mover
+        Console.WriteLine($"Jugador {currentPlayer.PlayerFaction}, elige una ficha para mover:");
+
+        for (int i = 0; i < currentPlayer.Tokens.Count; i++)
+        {
+            Console.WriteLine($"{i + 1}. Ficha {i + 1}: Posición actual {currentPlayer.Tokens[i].Position}");
+        }
+
+        int selectedTokenIndex;
+
+        while (true)
+        {
+            Console.Write("Selecciona el número de la ficha que deseas mover: ");
+            if (int.TryParse(Console.ReadLine(), out selectedTokenIndex) &&
+                selectedTokenIndex > 0 && selectedTokenIndex <= currentPlayer.Tokens.Count)
+            {
+                break; // Salir del bucle si se selecciona un índice válido
+            }
+            Console.WriteLine("Selección no válida. Intenta de nuevo.");
+        }
+
+        Token tokenToMove = currentPlayer.Tokens[selectedTokenIndex - 1]; // Seleccionar la ficha elegida
         int totalMove = tokenToMove.GetTotalMove(diceRoll);
-        tokenToMove.Move(Cells, totalMove);
+
+        tokenToMove.Move(Cells, totalMove); // Mover la ficha seleccionada
 
         // Actualizar el estado del juego
         foreach (var token in currentPlayer.Tokens)
@@ -77,21 +131,5 @@ public class Board
 
         // Cambiar al siguiente jugador
         currentPlayerIndex = (currentPlayerIndex + 1) % Players.Length;
-    }
-
-    private void PlaceRandomCell(ref List<int> availablePositions, Cell cellType, int count)
-    {
-        Random random = new Random();
-        
-        for (int i = 0; i < count; i++)
-        {
-            if (availablePositions.Count == 0) break; // Verifica si hay posiciones disponibles
-
-            int randomIndex = random.Next(availablePositions.Count);
-            int positionToPlace = availablePositions[randomIndex];
-
-            Cells[positionToPlace] = cellType; // Almacena la instancia de la celda en la posición correspondiente
-            availablePositions.RemoveAt(randomIndex);
-        }
     }
 }

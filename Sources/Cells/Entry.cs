@@ -1,7 +1,6 @@
 class Entry : Cell
 {
     Faction Color;
-
     Cell[] FinalRoad;
     Cell FactionBox;
 
@@ -13,6 +12,6 @@ class Entry : Cell
 
     public override void ActivateEffect(Token token)
     {
-        if (token.Type_faction == Color) token.Position = 0;
+        if (token.TokenFaction == Color) token.Position = 0;
     }
 }

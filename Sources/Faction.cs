@@ -1,7 +1,7 @@
- public enum Faction
-    {
-        red,
-        yellow,
-        blue,
-        green
-    }
+public enum Faction
+{
+    red,
+    yellow,
+    blue,
+    green
+}

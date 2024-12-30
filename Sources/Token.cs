@@ -1,6 +1,6 @@
 public class Token
 {
-    public Faction Type_faction { get; set; }
+    public Faction TokenFaction { get; set; }
     public Speed Speed { get; set; }
     public bool IsCooldownActive { get; set; }
     private int CooldownTime { get; set; }
@@ -12,7 +12,7 @@ public class Token
     // Constructor
     public Token(Faction faction, Ability ability, int basePosition)
     {
-        Type_faction = faction;
+        TokenFaction = faction;
         Speed = new Speed(1); // Inicializa Speed con un valor base
         Ability = ability;
         ProtectedToken = false;
