@@ -38,7 +38,9 @@ public class Token
 
     public void Move(Cell[] cells, int move)
     {
+        
         int actualPosition = Position;
+        cells[actualPosition].Tokens.Remove(this);
 
         for (int i = 0; i < Math.Abs(move); i++)
         {
@@ -58,7 +60,10 @@ public class Token
         }
 
         Position = actualPosition;
+        cells[actualPosition].Tokens.Add(this);
         cells[actualPosition].ActivateEffect(this);
+
+        Eat(cells[actualPosition], this);
     }
 
     // Usar la habilidad de la ficha
@@ -85,5 +90,20 @@ public class Token
                 CooldownTime = 0;
             }
         }
+        Speed.UpdateModifers();
+    }
+
+    public static void Eat(Cell cell, Token token)
+    {
+        foreach (var element in cell.Tokens)
+        {
+            if (element.TokenFaction != token.TokenFaction)
+            {
+                element.Position = -1;
+                cell.Tokens.Remove(element);
+            }
+        }
+
+        
     }
 }

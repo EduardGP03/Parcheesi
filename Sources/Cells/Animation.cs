@@ -1,4 +1,4 @@
-class Animation : Cell
-{
+// class Animation : Cell
+// {
 
-}
+// }

@@ -1,8 +1,7 @@
-class Exit : Cell
+class Normal: Cell
 {
-
     public override void ActivateEffect(Token token)
     {
-        throw new NotImplementedException();
+        return;
     }
 }

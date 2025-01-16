@@ -1,13 +1,11 @@
 public class Player
 {
-    public int PlayerStart {get; set;}
+    public Initial Start {get; set;}
     public List<Token> Tokens {get; set;}
-    public Faction PlayerFaction {get; set;}
 
-    public Player(int playerStart, List<Token> tokens, Faction playerFaction )
+    public Player(Initial start, List<Token> tokens )
     {
-        PlayerStart = playerStart;
+        Start = start;
         Tokens = tokens;
-        PlayerFaction = playerFaction;
     }
 }

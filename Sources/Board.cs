@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 public class Board
 {
     public Player[] Players;
@@ -5,25 +7,26 @@ public class Board
     private Dice DiceRoll;
     private int currentPlayerIndex;
 
-    public Board(int numberOfPlayers)
+    public Board()
     {
-        StartGame(numberOfPlayers);
+
     }
 
-    private void StartGame(int cantPlayers)
+    public void StartGame(int cantPlayers)
     {
         Players = new Player[cantPlayers];
         Cells = new Cell[40];
         DiceRoll = new Dice();
+        Initial[] ini = Ini();
 
         for (int i = 0; i < cantPlayers; i++)
         {
             Faction faction = (Faction)(i % 4); // Asignar una facción cíclicamente
-            Players[i] = new Player(i, new List<Token>(), faction);
+            Players[i] = new Player(ini[i], new List<Token>());
 
             for (int j = 0; j < 4; j++)
             {
-                Players[i].Tokens.Add(new Token(faction, null, 0)); // Ajusta Ability según sea necesario
+                Players[i].Tokens.Add(new Token(faction, null, -1)); // Ajusta Ability según sea necesario
             }
         }
 
@@ -38,18 +41,40 @@ public class Board
 
         // Definir los tipos de celdas y sus cantidades
         Dictionary<Cell, int> cellTypes = new Dictionary<Cell, int>
-    {
-        { new Trap0((1, 2)), 1 }, // Una instancia de Trap0
-        { new Trap1(Cells), 1 }, // Una instancia de Trap1
-        { new Trap2(), 1 },       // Una instancia de Trap2
-        { new Wall(3, (1, 2)), 3 }, // Tres muros
-        { new CellToken0((1, 2)), cantPlayers * 2 } // Dos celdas de token por jugador
-    };
+        {
+            { new Trap0((1, 2)), 1 }, // Una instancia de Trap0
+            { new Trap1(Cells), 1 }, // Una instancia de Trap1
+            { new Trap2(), 1 },       // Una instancia de Trap2
+            { new Wall(3, (1, 2)), 3 }, // Tres muros
+            { new CellToken0((1, 2)), cantPlayers * 2 }, // Dos celdas de token por jugador
+            { new Normal(), availablePositions.Count - (6 + cantPlayers * 2)}
+        };
 
         // Llama al método para colocar las celdas
         PlaceCells(cellTypes, ref availablePositions);
+
+        Cells[1] = new Exit();
+        Cells[11] = new Exit();
+        Cells[21] = new Exit();
+        Cells[31] = new Exit();
+        Cells[8] = new Entry(Faction.red, new Normal[3]);
+        Cells[18] = new Entry(Faction.yellow, new Normal[3]);
+        Cells[28] = new Entry(Faction.blue, new Normal[3]);
+        Cells[38] = new Entry(Faction.green, new Normal[3]);
     }
 
+    public Initial[] Ini()
+    {
+        Initial[] ini =
+        {
+            new Initial(1, 38, Faction.red),
+            new Initial(11, 8, Faction.yellow),
+            new Initial(21, 18, Faction.blue),
+            new Initial(31, 28, Faction.green)
+        };
+
+        return ini;
+    }
     private void PlaceCells(Dictionary<Cell, int> cellTypes, ref List<int> availablePositions)
     {
         foreach (var cellType in cellTypes)
@@ -78,31 +103,63 @@ public class Board
     {
         Player currentPlayer = Players[currentPlayerIndex];
 
-        // Activar habilidades de los tokens
-        foreach (var token in currentPlayer.Tokens)
+        // Mostrar las fichas del jugador y sus habilidades
+        Console.WriteLine($"Turno del jugador {currentPlayer.Start.Color}:");
+        for (int i = 0; i < currentPlayer.Tokens.Count; i++)
         {
-            if (!token.IsCooldownActive) // Verifica si la habilidad está disponible
+            Token token = currentPlayer.Tokens[i];
+            Console.WriteLine($"{i + 1}. Ficha {i + 1} (Posición: {token.Position}) - Habilidad: {token.Ability?.Name ?? "Ninguna"}");
+        }
+
+        // Opción para usar habilidades
+        while (true)
+        {
+            Console.WriteLine("¿Deseas usar alguna habilidad? (s/n)");
+            string useAbilityInput = Console.ReadLine().ToLower();
+
+            if (useAbilityInput == "s")
             {
-                // Permitir al jugador elegir usar una habilidad
-                Console.WriteLine($"¿Deseas usar la habilidad del token {token.TokenFaction}? (s/n)");
-                string input = Console.ReadLine();
-                if (input.ToLower() == "s")
+                Console.WriteLine("Selecciona las habilidades que deseas activar (separadas por comas):");
+                Console.WriteLine("Ejemplo: 1,2 para activar la habilidad de la ficha 1 y 2.");
+                string abilitySelection = Console.ReadLine();
+                string[] selectedIndices = abilitySelection.Split(',');
+
+                foreach (string index in selectedIndices)
                 {
-                    token.UseAbility(); // Usa la habilidad
+                    if (int.TryParse(index.Trim(), out int selectedIndex) &&
+                        selectedIndex > 0 && selectedIndex <= currentPlayer.Tokens.Count)
+                    {
+                        Token token = currentPlayer.Tokens[selectedIndex - 1];
+                        token.Ability?.Activate(token); // Activa la habilidad si existe
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Índice no válido: {index}");
+                    }
                 }
+            }
+            else if (useAbilityInput == "n")
+            {
+                break; // Salir del bucle si no se desean usar habilidades
+            }
+            else
+            {
+                Console.WriteLine("Opción no válida. Por favor, ingresa 's' o 'n'.");
             }
         }
 
         // Lanzar el dado
         int diceRoll = DiceRoll.Roll();
-        Console.WriteLine($"El jugador {currentPlayer.PlayerFaction} ha lanzado el dado y obtuvo: {diceRoll}");
+        bool[] validTokens = ValidToken(currentPlayer.Tokens, diceRoll);
+        Console.WriteLine($"El jugador {currentPlayer.Start.Color} ha lanzado el dado y obtuvo: {diceRoll}");
 
-        // Mostrar las fichas del jugador y permitir que elija una para mover
-        Console.WriteLine($"Jugador {currentPlayer.PlayerFaction}, elige una ficha para mover:");
+        // Mover una ficha como antes
+        Console.WriteLine($"Jugador {currentPlayer.Start.Color}, elige una ficha para mover:");
 
         for (int i = 0; i < currentPlayer.Tokens.Count; i++)
         {
-            Console.WriteLine($"{i + 1}. Ficha {i + 1}: Posición actual {currentPlayer.Tokens[i].Position}");
+            string valid = validTokens[i] ? "valid" : "invalid";
+            Console.WriteLine($"{i + 1}. Ficha {i + 1}: Posición actual {currentPlayer.Tokens[i].Position} : {valid}");
         }
 
         int selectedTokenIndex;
@@ -111,7 +168,7 @@ public class Board
         {
             Console.Write("Selecciona el número de la ficha que deseas mover: ");
             if (int.TryParse(Console.ReadLine(), out selectedTokenIndex) &&
-                selectedTokenIndex > 0 && selectedTokenIndex <= currentPlayer.Tokens.Count)
+                selectedTokenIndex > 0 && selectedTokenIndex <= currentPlayer.Tokens.Count && validTokens[selectedTokenIndex - 1])
             {
                 break; // Salir del bucle si se selecciona un índice válido
             }
@@ -120,6 +177,12 @@ public class Board
 
         Token tokenToMove = currentPlayer.Tokens[selectedTokenIndex - 1]; // Seleccionar la ficha elegida
         int totalMove = tokenToMove.GetTotalMove(diceRoll);
+        Console.WriteLine(totalMove);
+
+        if(tokenToMove.Position == -1)
+        {
+            tokenToMove.Position = currentPlayer.Start.Exit;
+        }
 
         tokenToMove.Move(Cells, totalMove); // Mover la ficha seleccionada
 
@@ -127,9 +190,52 @@ public class Board
         foreach (var token in currentPlayer.Tokens)
         {
             token.UpdateTurn(); // Actualiza cooldowns y estado del token
+            int position = token.Position;
+            Cell currentCell = Cells[position];
+
+            Console.WriteLine(currentCell);
+
         }
 
         // Cambiar al siguiente jugador
         currentPlayerIndex = (currentPlayerIndex + 1) % Players.Length;
     }
+
+    public void DisplayBoard()
+    {
+        Console.Clear(); // Limpiar la consola para redibujar el tablero
+
+        Console.WriteLine("Tablero:");
+        for (int i = 0; i < Cells.Length; i++)
+        {
+            if (Cells[i] != null)
+            {
+                Console.Write($"[{Cells[i].GetType().Name.Substring(0, 3)}] "); // Muestra el tipo de celda en forma abreviada.
+            }
+            else
+            {
+                Console.Write("[   ] "); // Espacio vacío en el tablero.
+            }
+        }
+        Console.WriteLine(); // Nueva línea después del tablero.
+    }
+
+    public bool[] ValidToken(List<Token> tokens, int roll)
+    {
+        bool[] validToken = new bool[tokens.Count];
+
+        for (int i = 0; i < tokens.Count; i++)
+        {
+            if (tokens[i].Position == -1 && roll != 5)
+                validToken[i] = false;
+
+
+            else
+                validToken[i] = true;
+        }
+
+        return validToken;
+    }
 }
+
+
