@@ -7,7 +7,11 @@ public class Token
     public Ability Ability { get; set; }
     public int Position { get; set; }
     public int BasePosition { get; set; }
-    public bool ProtectedToken { get; set; }
+    public bool ProtectedEat { get; set; }
+    public bool ProtectedTrap { get; set; }
+    public bool ProtectedEffect {get; set;}
+    public bool TryAgain {get; set;}
+
 
     // Constructor
     public Token(Faction faction, Ability ability, int basePosition)
@@ -15,7 +19,10 @@ public class Token
         TokenFaction = faction;
         Speed = new Speed(1); // Inicializa Speed con un valor base
         Ability = ability;
-        ProtectedToken = false;
+        ProtectedEat = false;
+        ProtectedTrap = false;
+        ProtectedEffect = false;
+        TryAgain = false;
         BasePosition = basePosition;
         Position = basePosition; // Inicializa la posición en el base position
         IsCooldownActive = false;

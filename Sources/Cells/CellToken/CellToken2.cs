@@ -7,6 +7,6 @@ class CellToken2 : CellToken
 
     public override void ActivateEffect(Token token)
     {
-        token.ProtectedToken = true;
+        token.ProtectedEat = true;
     }
 }
