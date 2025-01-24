@@ -6,14 +6,14 @@
         Console.Write("Ingrese el número de jugadores (2-4): ");
         int numberOfPlayers = int.Parse(Console.ReadLine());
 
-        Board gameBoard = new Board();
+        Game game = new Game(new Board());
 
-        gameBoard.StartGame(numberOfPlayers);
-        foreach(var element in gameBoard.Cells)
+        game.StartGame(numberOfPlayers);
+        foreach(var element in game.Maze.Cells)
             Console.WriteLine(element);
         while (true)
         {
-            gameBoard.NextTurn();
+            game.UpdateBoard();
         }
     }
 }

@@ -8,24 +8,18 @@ public class Kill : Ability
 
     public override void Activate(Player Player, Token token)
     {
-        for (int i = 1; i <= 3; i++)
-        {
-            int temp = token.Position + i;
-            int position = temp < 40 ? temp : temp - 40;
-            Cell cell = Cells[position];
-            var tokens = cell.Tokens;
+        List<Token> value = DistanceOfAbility(Cells, token);
 
-            if (tokens.Count != 0 && tokens[0].TokenFaction != token.TokenFaction)
-            {
-                Killer(tokens);
-                break;
-            }
-        }
+        if (value != null)
+            Killer(value);
+
+        else
+            Console.WriteLine("no se pudo ejecutar la habilidad ");
     }
 
     private void Killer(List<Token> tokens)
     {
-        if (tokens[0].ProtectedEffect == false)
+        if (!Chield(tokens))
         {
             tokens[0].Position = -1;
             tokens.Remove(tokens[0]);

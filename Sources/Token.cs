@@ -9,20 +9,24 @@ public class Token
     public int BasePosition { get; set; }
     public bool ProtectedEat { get; set; }
     public bool ProtectedTrap { get; set; }
-    public bool ProtectedEffect {get; set;}
-    public bool TryAgain {get; set;}
+    public bool ProtectedEffect { get; set; }
+    public bool TryAgain { get; set; }
+    public bool Road { get; set; }
+    public bool Goal { get; set; }
 
 
     // Constructor
     public Token(Faction faction, Ability ability, int basePosition)
     {
         TokenFaction = faction;
-        Speed = new Speed(1); // Inicializa Speed con un valor base
+        Speed = new Speed(3); // Inicializa Speed con un valor base
         Ability = ability;
         ProtectedEat = false;
         ProtectedTrap = false;
         ProtectedEffect = false;
         TryAgain = false;
+        Road = false;
+        Goal = false;
         BasePosition = basePosition;
         Position = basePosition; // Inicializa la posición en el base position
         IsCooldownActive = false;
@@ -34,10 +38,11 @@ public class Token
     {
         int result = Speed.BaseValue + diceRoll;
 
+
         // Aplica los modificadores
         foreach (var mod in Speed.ModifierswithDuration.Keys)
         {
-            result += mod; // Cambiar a suma si quieres que los modificadores aumenten el movimiento
+            result *= mod; // Cambiar a suma si quieres que los modificadores aumenten el movimiento
         }
 
         return result;
@@ -45,32 +50,53 @@ public class Token
 
     public void Move(Cell[] cells, int move)
     {
-        
-        int actualPosition = Position;
-        cells[actualPosition].Tokens.Remove(this);
-
-        for (int i = 0; i < Math.Abs(move); i++)
+        if (Road)
         {
-            // Ajusta la posición
-            actualPosition += (move > 0) ? 1 : -1;
+            Position += move;
 
-            // Manejo de límites del tablero
-            if (actualPosition < 0) actualPosition = cells.Length - 1;
-            if (actualPosition >= cells.Length) actualPosition = 0;
-
-            // Activar efecto si es una pared
-            if (cells[actualPosition] is Wall)
-            {
-                cells[actualPosition].ActivateEffect(this);
-                break;
-            }
+            if (Position >= 4)
+                Goal = true;
         }
 
-        Position = actualPosition;
-        cells[actualPosition].Tokens.Add(this);
-        cells[actualPosition].ActivateEffect(this);
+        else
+        {
+            int actualPosition = Position;
+            cells[actualPosition].Tokens.Remove(this);
 
-        Eat(cells[actualPosition], this);
+            for (int i = 0; i < Math.Abs(move); i++)
+            {
+                // Ajusta la posición
+                actualPosition += (move > 0) ? 1 : -1;
+
+                // Manejo de límites del tablero
+                if (actualPosition < 0) actualPosition = cells.Length - 1;
+                if (actualPosition >= cells.Length) actualPosition = 0;
+
+                // Activar efecto si es una pared
+                if (cells[actualPosition] is Wall)
+                {
+                    cells[actualPosition].ActivateEffect(this);
+                    break;
+                }
+
+                if (cells[actualPosition] is Entry)
+                {
+                    cells[actualPosition].ActivateEffect(this);
+                    if (Road)
+                    {
+                        Position += move - i;
+                        break;
+                    }
+                }
+            }
+
+            Position = actualPosition;
+            cells[actualPosition].Tokens.Add(this);
+            cells[actualPosition].ActivateEffect(this);
+
+
+            Eat(cells[actualPosition], this);
+        }
     }
 
     // Usar la habilidad de la ficha
@@ -102,15 +128,14 @@ public class Token
 
     public static void Eat(Cell cell, Token token)
     {
-        foreach (var element in cell.Tokens)
-        {
-            if (element.TokenFaction != token.TokenFaction)
+        if (cell.Tokens.Count != 0)
+            foreach (var element in cell.Tokens)
             {
-                element.Position = -1;
-                cell.Tokens.Remove(element);
+                if (element.TokenFaction != token.TokenFaction)
+                {
+                    element.Position = -1;
+                    cell.Tokens.Remove(element);
+                }
             }
-        }
-
-        
     }
 }
