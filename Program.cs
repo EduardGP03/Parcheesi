@@ -10,7 +10,11 @@
 
         game.StartGame(numberOfPlayers);
         foreach(var element in game.Maze.Cells)
-            Console.WriteLine(element);
+           {
+                if (game.Maze.Cell)
+           }
+           
+            // Console.WriteLine(element);
         while (true)
         {
             game.UpdateBoard();
