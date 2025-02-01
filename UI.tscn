@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://b6hd81gw6kx7q"]
+
+[ext_resource type="Script" path="res://Ui.cs" id="1_u8a2e"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_srd3t"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_u8a2e")
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 225.0
+offset_top = 227.0
+offset_right = 315.0
+offset_bottom = 269.0
+scale = Vector2(0.387598, 0.697521)
+text = "Roll
+"
+icon = SubResource("ViewportTexture_srd3t")
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

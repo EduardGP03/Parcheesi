@@ -1,3 +1,5 @@
+using Godot;
+
 class Trap1 : Trap
 {
     int cantSteps;
@@ -10,5 +12,6 @@ class Trap1 : Trap
     public override void ActivateEffect(Token token)
     {
         token.Move(ArrayCell, cantSteps);
+        GD.Print("Trap1");
     }
 }

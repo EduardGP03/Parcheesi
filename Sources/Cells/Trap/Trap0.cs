@@ -1,3 +1,4 @@
+using Godot;
 class Trap0 : Trap
 {
     (int, int) Modifier;
@@ -10,5 +11,6 @@ class Trap0 : Trap
     public override void ActivateEffect(Token token)
     {
         token.Speed.AddModifier(Modifier.Item1, Modifier.Item2);
+        GD.Print("Trap0");
     }
 }

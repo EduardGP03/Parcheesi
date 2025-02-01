@@ -1,3 +1,4 @@
+using Godot;
 class Wall : Cell
 {
     int CoolDown;
@@ -29,7 +30,10 @@ class Wall : Cell
         {
             IsUsed = false;
         }
+
+    GD.Print("wall");
     }
+    
     public void UpdateState()
     {
         if (CoolDown > 0)

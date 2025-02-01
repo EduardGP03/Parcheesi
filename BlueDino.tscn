@@ -1,0 +1,44 @@
+[gd_scene load_steps=7 format=3 uid="uid://d4kxfm7janta0"]
+
+[ext_resource type="Texture2D" uid="uid://drex5x6srnj28" path="res://Sprites/BlueDino.png" id="1_vcv8a"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t54fa"]
+atlas = ExtResource("1_vcv8a")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g5v0w"]
+atlas = ExtResource("1_vcv8a")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2dcmn"]
+atlas = ExtResource("1_vcv8a")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2k6o7"]
+atlas = ExtResource("1_vcv8a")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_pwpvw"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t54fa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g5v0w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2dcmn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2k6o7")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_pwpvw")
+autoplay = "default"
+frame_progress = 0.828789

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public abstract class Ability
 {
     public string Name { get; set; }

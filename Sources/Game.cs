@@ -1,14 +1,17 @@
+using System;
+using System.Collections.Generic;
+
 class Game
 {
     public Board Maze { get; set; }
     public Ability[] Abilitys { get; set; }
 
+    public int LastRoll = 1;
+
     public Game(Board maze)
     {
         Maze = maze;
     }
-
-    //Random random1 = new Random();
 
     public Ability GetAbility(int selectAbility)
     {
@@ -128,26 +131,26 @@ class Game
             availablePositions.RemoveAt(randomIndex);
         }
     }
-
     public void UpdateBoard()
     {
         Player currentPlayer = Maze.Players[Maze.currentPlayerIndex];
 
-        // Mostrar las fichas del jugador y sus habilidades
-        Console.WriteLine($"Turno del jugador {currentPlayer.Start.Color}:");
-        for (int i = 0; i < currentPlayer.Tokens.Count; i++)
-        {
-            Token token = currentPlayer.Tokens[i];
-            Console.WriteLine($"{i + 1}. Ficha {i + 1} (Posición: {token.Position}) - Habilidad: {token.Ability?.Name ?? "Ninguna"}");
-        }
+        // // Mostrar las fichas del jugador y sus habilidades
+        // Console.WriteLine($"Turno del jugador {currentPlayer.Start.Color}:");
+        // for (int i = 0; i < currentPlayer.Tokens.Count; i++)
+        // {
+        //     Token token = currentPlayer.Tokens[i];
+        //     Console.WriteLine($"{i + 1}. Ficha {i + 1} (Posición: {token.Position}) - Habilidad: {token.Ability?.Name ?? "Ninguna"}");
+        // }
 
         // Opción para usar habilidades
         UseAbility(currentPlayer);
 
         // Lanzar el dado
         int diceRoll = Maze.DiceRoll.Roll();
+        LastRoll = diceRoll;
         bool[] validTokens = ValidToken(currentPlayer.Tokens, diceRoll);
-        Console.WriteLine($"El jugador {currentPlayer.Start.Color} ha lanzado el dado y obtuvo: {diceRoll}");
+        //Console.WriteLine($"El jugador {currentPlayer.Start.Color} ha lanzado el dado y obtuvo: {diceRoll}");
 
         SelectToken(currentPlayer, validTokens, diceRoll);
 
@@ -170,7 +173,7 @@ class Game
     public void SelectToken(Player currentPlayer, bool[] validTokens, int diceRoll)
     {
         // Mover una ficha como antes
-        Console.WriteLine($"Jugador {currentPlayer.Start.Color}, elige una ficha para mover:");
+        //Console.WriteLine($"Jugador {currentPlayer.Start.Color}, elige una ficha para mover:");
 
         int count = 0;
         for (int i = 0; i < currentPlayer.Tokens.Count; i++)
@@ -179,15 +182,15 @@ class Game
 
             if (valid)
             {
-                Console.WriteLine($"{i + 1}. Ficha {i + 1}: Posición actual {currentPlayer.Tokens[i].Position} : {valid}");
+                //Console.WriteLine($"{i + 1}. Ficha {i + 1}: Posición actual {currentPlayer.Tokens[i].Position} : {valid}");
                 count++;
             }
 
-            else if (count == 0)
-            {
-                Console.WriteLine("No hay opciones posibeles pasando al siguiente player ");
-                return;
-            }
+            // else if (count == 0)
+            // {
+            //     Console.WriteLine("No hay opciones posibeles pasando al siguiente player ");
+            //     return;
+            // }
         }
 
         int selectedTokenIndex;
@@ -215,25 +218,6 @@ class Game
         // Mover la ficha seleccionada
         tokenToMove.Move(Maze.Cells, totalMove);
     }
-
-    // public void DisplayBoard()
-    // {
-    //     Console.Clear(); // Limpiar la consola para redibujar el tablero
-
-    //     Console.WriteLine("Tablero:");
-    //     for (int i = 0; i < Maze.Cells.Length; i++)
-    //     {
-    //         if (Maze.Cells[i] != null)
-    //         {
-    //             Console.Write($"[{Maze.Cells[i].GetType().Name.Substring(0, 3)}] "); // Muestra el tipo de celda en forma abreviada.
-    //         }
-    //         else
-    //         {
-    //             Console.Write("[   ] "); // Espacio vacío en el tablero.
-    //         }
-    //     }
-    //     Console.WriteLine(); // Nueva línea después del tablero.
-    // }
 
     public bool[] ValidToken(List<Token> tokens, int roll)
     {
@@ -279,10 +263,12 @@ class Game
                     }
                 }
             }
+
             else if (useAbilityInput == "n")
             {
                 break; // Salir del bucle si no se desean usar habilidades
             }
+            
             else
             {
                 Console.WriteLine("Opción no válida. Por favor, ingresa 's' o 'n'.");

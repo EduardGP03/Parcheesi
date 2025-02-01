@@ -1,3 +1,5 @@
+using System;
+
 public class Dice
 {
     private Random random;

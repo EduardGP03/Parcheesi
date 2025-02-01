@@ -1,0 +1,44 @@
+[gd_scene load_steps=7 format=3 uid="uid://de8rfghr6ncs4"]
+
+[ext_resource type="Texture2D" uid="uid://b8egk22tygg0" path="res://Sprites/YellowDino.png" id="1_kdg7t"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ycj1r"]
+atlas = ExtResource("1_kdg7t")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qh435"]
+atlas = ExtResource("1_kdg7t")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_citnh"]
+atlas = ExtResource("1_kdg7t")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_la27k"]
+atlas = ExtResource("1_kdg7t")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xbq77"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ycj1r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qh435")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_citnh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_la27k")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_xbq77")
+autoplay = "default"
+frame_progress = 0.116357

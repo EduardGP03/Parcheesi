@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public abstract class Cell
 {
     public List<Token> Tokens;

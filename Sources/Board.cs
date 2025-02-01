@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 public class Board
 {
     public Player[] Players;
@@ -10,7 +8,6 @@ public class Board
     public Board()
     {
         Cells = new Cell[40];
-
     }
 
 }

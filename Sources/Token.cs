@@ -1,3 +1,5 @@
+using Godot;
+using System;
 public class Token
 {
     public Faction TokenFaction { get; set; }
@@ -37,7 +39,6 @@ public class Token
     public int GetTotalMove(int diceRoll)
     {
         int result = Speed.BaseValue + diceRoll;
-
 
         // Aplica los modificadores
         foreach (var mod in Speed.ModifierswithDuration.Keys)
@@ -106,8 +107,7 @@ public class Token
         {
             IsCooldownActive = true;
             CooldownTime = Ability.CooldownTime;
-            Console.WriteLine("Ability used");
-            // Implementar lógica específica de la habilidad aquí
+            GD.Print("usado");
         }
     }
 
@@ -123,6 +123,7 @@ public class Token
                 CooldownTime = 0;
             }
         }
+        
         Speed.UpdateModifers();
     }
 

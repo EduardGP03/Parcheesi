@@ -1,4 +1,4 @@
-
+using System.Collections.Generic;
 public class Speed
 {
     public int BaseValue{get; private set;}
@@ -19,7 +19,6 @@ public class Speed
             ModifierswithDuration[mod] -= 1;
             if (ModifierswithDuration[mod] <= 0)
                 ModifierswithDuration.Remove(mod);
-
         }
     }
 }

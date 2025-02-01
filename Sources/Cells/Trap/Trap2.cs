@@ -1,3 +1,4 @@
+using Godot;
 class Trap2 : Trap
 {
     public Trap2()
@@ -8,5 +9,6 @@ class Trap2 : Trap
     public override void ActivateEffect(Token token)
     {
         token.Position = token.BasePosition;
+        GD.Print("Trap2");
     }
 }
