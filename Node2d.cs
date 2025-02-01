@@ -332,7 +332,9 @@ public partial class Node2d : Node2D
 
 	private void _on_control_on_roll_dice()
 	{
-		UpdateDiceFace(random.Next(1, 7));
+		int face = random.Next(1, 7);
+		UpdateDiceFace(face);
+		game.LastRoll = face;
 		MoveTokens(turno);
 		turno ++;
 		turno %= 4;
@@ -341,7 +343,6 @@ public partial class Node2d : Node2D
 	private void MoveTokens(int IteratorOfTokens2D)
 	{
 		int token = 0;
-
 		switch (IteratorOfTokens2D)
 		{
 			case 1:
